@@ -1,0 +1,15 @@
+Entry 1
+2019-09-21 C.E.
+00:04 GMT+0545
+DHULIKHEL, NEPAL
+
+using standard journal entry;
+
+    implemented simple GraphModule and NetModule for
+ChanBrowser( download boards.json, simple JSplitPanel ).
+    
+    will most likely only be able to work on this sporadically, owing
+to drone project with Bipin and the rest.
+    
+    will add a new entry for each non-trivial update, the definition of 'trivial'
+being scaled down to match the relatively small scope of the project.
