@@ -13,7 +13,9 @@ public class NetModule
         final int BUFFER_SIZE = 1024;
         int bytes_read = -1;
         byte[] buffer=  new byte[BUFFER_SIZE];
+        
 
+        //NOTABENE: should use if-modified-since 
         chan_url = new URL(url);
         chan_conn = (HttpURLConnection) chan_url.openConnection(); 
         int resp_code = chan_conn.getResponseCode();
