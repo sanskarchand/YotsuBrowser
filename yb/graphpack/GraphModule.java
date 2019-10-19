@@ -2,9 +2,12 @@ package yb.graphpack;
 
 import javax.swing.*;
 import javax.swing.event.*;
+
 import java.util.*;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Image;
+
+import yb.ChanBrowser;
 
 public class GraphModule extends JPanel implements ListSelectionListener {
     
@@ -35,7 +38,7 @@ public class GraphModule extends JPanel implements ListSelectionListener {
         JScrollPane list_scroll_pane = new JScrollPane(list);
         //the right panel
         right_panel = new JPanel();
-        //right_panel.setLayout( new FlowLayout() );
+        right_panel.setLayout( new BoxLayout(right_panel, BoxLayout.Y_AXIS) );
         JScrollPane right_scroll_pane = new JScrollPane(right_panel);
 
 
@@ -67,13 +70,22 @@ public class GraphModule extends JPanel implements ListSelectionListener {
         return split_pane;
     }
 
-    public void addCatalogThread( String text, String img_path) {
+    public void addCatalogThread( String text, String img_fname ) {
+        
+        right_panel.revalidate();
+        
+        //NOTABENE: impossible for img_fname to be "<UNDEF>", right?
+        ImageIcon orig_image = new ImageIcon( yb.ChanBrowser.PATH_TEMP_IMG + "/" + img_fname ); // gc? ref?
+        Image scaled_img = orig_image.getImage().getScaledInstance( yb.ChanBrowser.THUMB_SIZE_X, 
+                                yb.ChanBrowser.THUMB_SIZE_Y, java.awt.Image.SCALE_SMOOTH );
+        ImageIcon thread_thumb = new ImageIcon (scaled_img);
 
-        JLabel label = new JLabel( "<html>" + text + "<br></html>", JLabel.LEFT);      // already in HTML
+        JLabel label = new JLabel( "<html>" + text + "</html>", thread_thumb, JLabel.LEFT);      // already in HTML
+
         right_panel.add(label);
         right_panel.setVisible(true);
 
-        System.out.println("It's-a me, Common Sensio!");
+        //System.out.println("It's-a me, Common Sensio!");
         frame.setVisible(true);
 
     }
@@ -81,6 +93,11 @@ public class GraphModule extends JPanel implements ListSelectionListener {
     protected void updateLabel(String name) {
         selected_board = name;
     }
+
+    public void  deletePreviousContent() {
+        right_panel.removeAll();
+    }
+
 
     public void refreshThis() {
 

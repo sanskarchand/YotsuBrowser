@@ -20,10 +20,18 @@ public class ChanBrowser {
     public static final String URL_BASE = "http://a.4cdn.org/";
     public static final String URL_IMG_BASE = "http://i.4cdn.org/";
     public static final String PATH_TEMP = "yb/tmp";
+    public static final String PATH_TEMP_IMG = "yb/tmp/img";
+
+
+    public static final int THUMB_SIZE_X = 64;
+    public static final int THUMB_SIZE_Y = 64;
 
 
     private static CatalogModel cur_catalog;
     private static String cur_board_name;
+    
+    private static String DISPLAY_MODE;
+    private static int cur_page_no;
 
     private static ParseMod pmod;
     private static NetModule nmod;
@@ -72,6 +80,40 @@ public class ChanBrowser {
         return thread_list;
     
     }
+    
+    private static int downloadThreadImage( String board_name, String local_fname ) {
+        
+        String img_url =  URL_IMG_BASE +  board_name + "/" + local_fname;
+        System.out.println("requesting: " + img_url);
+
+        try {
+            nmod.saveLinkToFile( img_url, PATH_TEMP_IMG );
+        } catch ( IOException e ) {
+
+            System.out.println("ChanBrowser: downloadThreadImage: " + e.getMessage());
+            return -1;
+        }
+
+        return 1;
+    }
+
+    private static void actuallyDisplayCatalog( CatalogModel cat, List<ThreadModel> init_threads, int page_no ) {
+        
+        // need to delete previous content, too
+        gmod.deletePreviousContent();
+
+        for ( ThreadModel thread_model : init_threads ) {
+            if ( thread_model.getPageNo() != page_no ) { continue; }
+            
+            System.out.println("adding thread to catalog");
+
+            int success = downloadThreadImage( cat.getBoardName(), thread_model.getThreadImageLocalFname() );
+            gmod.addCatalogThread( thread_model.getThreadSubject(), thread_model.getThreadImageLocalFname() ); 
+        }
+        
+        gmod.refreshThis();
+
+    }
 
     private static void populateCatalog( CatalogModel cat ) {
         
@@ -88,25 +130,22 @@ public class ChanBrowser {
         }
 
         if ( file_path != null ) {
-
             thread_list = pmod.getInitialThreads( board_name, file_path + "/catalog.json");
             
         }
+        
+        // display first page only
+        System.out.println("Displaying the first page");
 
-        for ( ThreadModel thread_model : thread_list ) {
-            System.out.println("adding threads to catalog");
-            gmod.addCatalogThread( thread_model.getThreadSubject(), thread_model.getThreadImageLocalFname() ); 
-        }
-
-        gmod.refreshThis();
-
+        //NOTABENE: surely cur_catalog could replace this?
+        actuallyDisplayCatalog( cat, thread_list, 1 );
     }
 
     private static void mainLoop() {
 
         String tmp_bname = gmod.getSelectedBoard();
 
-        System.out.println("Selected board = " + tmp_bname );
+        System.out.println("Selected board = " + tmp_bname + "---Current board = " + cur_board_name + "---");
 
         if ( tmp_bname != "<UNDEF>" && tmp_bname != cur_board_name) {
                 

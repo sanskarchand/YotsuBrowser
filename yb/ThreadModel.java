@@ -15,7 +15,7 @@ public class ThreadModel {
     private String m_board;
     
     // secondary properties
-    private int m_image_no;
+    private long m_image_no;
     private String m_img_filename;
     private String m_img_ext;
 
@@ -37,7 +37,7 @@ public class ThreadModel {
         m_img_ext = null;
     }
 
-    public void  setTopImage( int image_no, String i_fname, String i_ext ) {
+    public void  setTopImage( long image_no, String i_fname, String i_ext ) {
         m_image_no = image_no;     
         m_img_filename = i_fname;
         m_img_ext = i_ext;
@@ -57,12 +57,15 @@ public class ThreadModel {
         return m_subject;
     }
 
+    public int getPageNo() {
+        return m_page_no;
+    }
+
     public String getThreadImageLocalFname() {
         if ( m_image_no == -1 ) {
             return "<UNDEF>";
         } 
-
-        return m_image_no + "." + m_img_ext; 
+        return Long.toString(m_image_no) + m_img_ext; 
     }
     
 }

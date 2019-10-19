@@ -135,7 +135,7 @@ public class ParseMod {
                 }
 
                 // extract secondary data
-                int img_no = thread_obj.getInt("tim");
+                long img_no = thread_obj.getJsonNumber("tim").longValue();
                 String img_fname = thread_obj.getString("filename");
                 String img_ext = thread_obj.getString("ext");
 

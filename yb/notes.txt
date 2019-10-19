@@ -12,4 +12,16 @@ ChanBrowser( download boards.json, simple JSplitPanel ).
 to drone project with Bipin and the rest.
     
     will add a new entry for each non-trivial update, the definition of 'trivial'
-being scaled down to match the relatively small scope of the project.
+being scaled down to match the relatively small scope of the project 
+
+Entry 2
+2019-10-19 C.E.
+18:35 GMT+0545
+MAHENDRANAGAR, NEPAL.
+
+    
+    using Racota to track time
+
+
+    can now see the thumbnails and subjects of the posts  on page no. 1 of any board 
+        ( will thumbnailing work with .webms? not sure )
