@@ -1,6 +1,18 @@
 Sat 19 Oct 2019 01:09:42 AM +0545
 
--> find out why the mainLoop() function requires a System print call
+1) find out why the mainLoop() function requires a System print call
    If I forego that, the EDT seems to consume everything ( "optimized away"? )
 
--> implement policies to follow the terms of service of the API
+2) implement policies to follow the terms of service of the API
+
+
+
+Tue 22 Oct 2019 03:39:44 PM +0545
+
+About to inquire into point 1).
+
+
+Sat 26 Oct 2019 06:44:23 PM +0545
+
+remember that printing on the console makes programs a _lot_ slower ( remember goraksha, console debug )
+

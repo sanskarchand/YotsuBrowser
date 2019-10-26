@@ -2,6 +2,7 @@ package yb.netpack;
 
 import java.net.*;
 import java.io.*;
+import yb.ChanBrowser;
 
 public class NetModule
 {
@@ -20,7 +21,7 @@ public class NetModule
         chan_conn = (HttpURLConnection) chan_url.openConnection(); 
         int resp_code = chan_conn.getResponseCode();
 
-        System.out.println("Req-code: " + resp_code);
+        ChanBrowser.DEBUG_PRINT("Req-code: " + resp_code);
 
         if (resp_code == HttpURLConnection.HTTP_OK) {
             String fname = url.substring(url.lastIndexOf("/") + 1, url.length());

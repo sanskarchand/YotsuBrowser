@@ -25,3 +25,20 @@ MAHENDRANAGAR, NEPAL.
 
     can now see the thumbnails and subjects of the posts  on page no. 1 of any board 
         ( will thumbnailing work with .webms? not sure )
+
+Entry 3
+2019-10-26 C.E.
+20:19 GMT+0545
+MAHENDRANAGAR, NEPAL
+
+    
+    Forgot to use Racota. Oh well.
+
+
+    No new features added, but successfully removed the need to print to console
+        unnecessarily.
+
+    Instead of an M-V-C pattern, ended up with an MV-C one. Need to brush up on GoF.
+    
+    Ready to implement page changing
+

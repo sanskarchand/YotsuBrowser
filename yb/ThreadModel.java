@@ -31,7 +31,6 @@ public class ThreadModel {
         m_timestamp = now;
         m_thread_post = com;
 
-
         m_image_no = -1;
         m_img_filename = null;
         m_img_ext = null;
@@ -59,6 +58,10 @@ public class ThreadModel {
 
     public int getPageNo() {
         return m_page_no;
+    }
+
+    public int getThreadNo() {
+        return m_thread_no;
     }
 
     public String getThreadImageLocalFname() {

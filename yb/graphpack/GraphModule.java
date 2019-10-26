@@ -1,6 +1,7 @@
 package yb.graphpack;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.event.*;
 
 import java.util.*;
@@ -17,23 +18,53 @@ public class GraphModule extends JPanel implements ListSelectionListener {
     
     private JFrame frame;
 
-    private JList<String> list;
+    private JList<String> list;     // list of boards
+
+    private DefaultListModel<Integer> threads_model;
+    private JList<Integer> threads_list; // list of thread ids 
+
+
     private JPanel right_panel;     // NOTABENE: recover this from JScrollPane, from split_pane
     private JSplitPane split_pane;
+    private JPanel r_control_panel; // control panel inside right_panel
+    private BasicArrowButton r_next_but;
+    private BasicArrowButton r_prev_but;
+    
     private String[] board_names;
     private String selected_board; 
+    private int selected_page;
+    private ChanBrowser cb_app;
     //private String[] board_names = { "/a/-Anime and Manga",
     //                           "/g/-Technology", "/m/-Mecha"};
 
-    public GraphModule(String[] m_board_names) {
+    public GraphModule(String[] m_board_names, ChanBrowser main_app ) {
         
+        cb_app = main_app;
         selected_board =  "<UNDEF>";
+        selected_page = 0;
         board_names = m_board_names;
+
         list = new JList<String>(board_names);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
         list.setSelectedIndex(0); //NB: adding persistence?
         list.addListSelectionListener(this);
+        
+        threads_model = new DefaultListModel<>();
+        threads_list = new JList<>( threads_model );
+        threads_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        threads_list.setSelectedIndex(0); 
+        threads_list.addListSelectionListener(this);
+
+        
+        r_next_but = new BasicArrowButton ( BasicArrowButton.EAST );
+        r_prev_but = new BasicArrowButton ( BasicArrowButton.WEST );
+
+        //bind to listeners
+        
+        r_control_panel = new JPanel();
+        r_control_panel.setLayout( new BoxLayout(r_control_panel, BoxLayout.X_AXIS) );
+        r_control_panel.add( r_prev_but );
+        r_control_panel.add( r_next_but );
 
         JScrollPane list_scroll_pane = new JScrollPane(list);
         //the right panel
@@ -62,31 +93,43 @@ public class GraphModule extends JPanel implements ListSelectionListener {
             return;
         }
 
-        JList list = (JList)e.getSource();
-        updateLabel(board_names[list.getSelectedIndex()]);
+        //JList list = (JList)e.getSource();
+        Object src = e.getSource();
+
+        if (src.equals( list ) ) {
+            updateLabel(board_names[list.getSelectedIndex()]);
+            cb_app.boardChanged();
+        }
     }
 
     public JSplitPane getSplitPane() {
         return split_pane;
     }
 
-    public void addCatalogThread( String text, String img_fname ) {
+
+    public void addCatalogThread( int thread_no, String text, String img_fname ) {
         
-        right_panel.revalidate();
-        
-        //NOTABENE: impossible for img_fname to be "<UNDEF>", right?
-        ImageIcon orig_image = new ImageIcon( yb.ChanBrowser.PATH_TEMP_IMG + "/" + img_fname ); // gc? ref?
-        Image scaled_img = orig_image.getImage().getScaledInstance( yb.ChanBrowser.THUMB_SIZE_X, 
-                                yb.ChanBrowser.THUMB_SIZE_Y, java.awt.Image.SCALE_SMOOTH );
-        ImageIcon thread_thumb = new ImageIcon (scaled_img);
+        threads_model.addElement( thread_no );
 
-        JLabel label = new JLabel( "<html>" + text + "</html>", thread_thumb, JLabel.LEFT);      // already in HTML
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {  
+            
+            public void run() {
+                
+                //NOTABENE: impossible for img_fname to be "<UNDEF>", right?
+                ImageIcon orig_image = new ImageIcon( yb.ChanBrowser.PATH_TEMP_IMG + "/" + img_fname ); // gc? ref?
+                Image scaled_img = orig_image.getImage().getScaledInstance( yb.ChanBrowser.THUMB_SIZE_X, 
+                                        yb.ChanBrowser.THUMB_SIZE_Y, java.awt.Image.SCALE_SMOOTH );
+                ImageIcon thread_thumb = new ImageIcon (scaled_img);
 
-        right_panel.add(label);
-        right_panel.setVisible(true);
+                JLabel label = new JLabel( "<html>" + text + "</html>", thread_thumb, JLabel.LEFT);      // already in HTML
 
-        //System.out.println("It's-a me, Common Sensio!");
-        frame.setVisible(true);
+                right_panel.add(label);
+                right_panel.setVisible(true);
+
+                //System.out.println("It's-a me, Common Sensio!");
+                frame.setVisible(true);
+            }
+        });
 
     }
 
@@ -95,14 +138,34 @@ public class GraphModule extends JPanel implements ListSelectionListener {
     }
 
     public void  deletePreviousContent() {
-        right_panel.removeAll();
+
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        
+            public void run() {
+                right_panel.removeAll();
+            }
+        });
     }
 
-
+    public void drawControlPanel() {
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run()  {
+                right_panel.add( r_control_panel );
+                right_panel.setVisible( true );
+                frame.setVisible( true );
+            }
+        });
+    }
     public void refreshThis() {
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                frame.revalidate();
+                frame.repaint();
+                right_panel.revalidate();
+                drawControlPanel();
+            }
+        });
 
-        frame.revalidate();
-        frame.repaint();
 
     }
 
@@ -121,6 +184,10 @@ public class GraphModule extends JPanel implements ListSelectionListener {
 
     public String getSelectedBoard() {
         return selected_board;
+    }
+
+    public void setSelectedPage( int page_no ) {
+        selected_page = page_no; 
     }
 
     public void runGUI() {
