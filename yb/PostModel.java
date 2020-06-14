@@ -11,8 +11,6 @@ public class PostModel{
 
     
     // not going to bother with getters and setters for this
-    
-
     public PostModel( int p, String n, String c) {
 
         m_post_no = p;

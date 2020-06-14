@@ -19,8 +19,10 @@ import java.lang.NullPointerException;  // nurupo
 
 public class ParseMod {
     
-    
-    public List<String> getBoardsList() { //throws IOException {
+    private List<String> m_board_names = null;
+    private JsonArray m_catalog_array = null;
+
+    public void parseBoardsList() { //throws IOException {
 
         List<String> board_names = new  ArrayList<String>();
         InputStream boards_is = null;
@@ -51,29 +53,45 @@ public class ParseMod {
 
             //_DEBUG System.out.println( board_names.get(board_names.size() - 1) );
         }
-
-        return board_names;
+        
+        m_board_names = board_names;
 
     }
 
+    void parseCatalogAsJson(String catalog_filename) {
+        InputStream inp_stream = null; 
+
+        try {
+            inp_stream = new FileInputStream(catalog_filename);
+        } catch (IOException e) {
+            System.out.println("pmod: " + e.getMessage());
+        }
+        
+        JsonReader json_reader = Json.createReader(inp_stream);
+        m_catalog_array =  json_reader.readArray();
+    }
+
+    public List<String> getBoardsList() {
+        if (m_board_names == null) {
+            parseBoardsList();
+        }
+
+        return m_board_names;
+
+    }
 
     public List<Integer>  getThreadNumbers( String file ) {
 
         List<Integer> thread_nos = new ArrayList<Integer>();
-        InputStream is = null;
-
-        try {
-            is  =  new FileInputStream( file );
-        } catch ( IOException e ) {
-            System.out.println( "pmod:" + e.getMessage() );
+        
+        /*
+        if (m_catalog_array == null) {
+            parseCatalogAsJson(file);
         }
+        */
+        parseCatalogAsJson(file);
 
-        // if  is != null, exit
-        JsonReader rd =  Json.createReader( is );
-        JsonArray array = rd.readArray();
-        rd.close();
-
-        for ( JsonValue page_val : array ) {
+        for ( JsonValue page_val : m_catalog_array) {
             JsonObject this_page = (JsonObject) page_val;
             JsonArray my_threads = this_page.getJsonArray("threads");
 
@@ -89,23 +107,17 @@ public class ParseMod {
 
     }
 
-    public List<ThreadModel> getInitialThreads( String board_name, String catalog_file ) {
+    public List<ThreadModel> getInitialThreads( String board_name, String catalog_filename ) {
         
         List<ThreadModel> init_threads = new ArrayList<ThreadModel>();
-        InputStream is = null;
-
-        try {
-            is  =  new FileInputStream( catalog_file );
-        } catch ( IOException e ) {
-            System.out.println( "pmod:" + e.getMessage() );
+        
+        /*
+        if (m_catalog_array == null) {
+            parseCatalogAsJson(catalog_file);
         }
-
-        // if  is != null, exit
-        JsonReader rd =  Json.createReader( is );
-        JsonArray array = rd.readArray();
-        rd.close();
-
-        for ( JsonValue page_val : array ) {
+        */
+        parseCatalogAsJson(catalog_filename);
+        for ( JsonValue page_val : m_catalog_array) {
             JsonObject this_page = (JsonObject) page_val;
             
             int page_no  = this_page.getInt("page");
@@ -135,6 +147,7 @@ public class ParseMod {
                 }
 
                 // extract secondary data
+                // REM: change to string
                 long img_no = thread_obj.getJsonNumber("tim").longValue();
                 String img_fname = thread_obj.getString("filename");
                 String img_ext = thread_obj.getString("ext");

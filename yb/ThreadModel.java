@@ -70,5 +70,13 @@ public class ThreadModel {
         } 
         return Long.toString(m_image_no) + m_img_ext; 
     }
+
+    public String getThreadThumbnailLocalFname() {
+        if (m_image_no == -1) {
+            return "<UNDEF>"; 
+        }
+
+        return Long.toString(m_image_no) + "s" + m_img_ext;
+    }
     
 }

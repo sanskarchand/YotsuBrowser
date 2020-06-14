@@ -16,3 +16,17 @@ Sat 26 Oct 2019 06:44:23 PM +0545
 
 remember that printing on the console makes programs a _lot_ slower ( remember goraksha, console debug )
 
+
+Sun 14 Jun 2020 11:24:40 PM +0545
+Been a long time
+To do:
+Features:
+    -> filter 4chan's HTML to a form usable by Swing
+    -> actually add the ability to view thread contents;
+    -> 'pic related's could be opened in a new window,
+            in order to keep the text consistent
+
+Bugfix:
+    -> thread posts are not being displayed in JLabels.
+    
+
